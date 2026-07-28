@@ -1,0 +1,97 @@
+{
+  "annotations": { "list": [] },
+  "title": "Node App Monitoring",
+  "uid": "node-app",
+  "timezone": "browser",
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "CPU Utilization (%)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job=\"node-app\"}[1m]) * 100",
+          "legendFormat": "CPU %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": { "fillOpacity": 20 }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "title": "Memory Usage (MB)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=\"node-app\"} / 1024 / 1024",
+          "legendFormat": "RSS (MB)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "custom": { "fillOpacity": 20 }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "title": "Request Latency (seconds)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_sum{job=\"node-app\"}[1m]) / rate(http_request_duration_seconds_count{job=\"node-app\"}[1m])",
+          "legendFormat": "Avg Latency",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"node-app\"}[1m]))",
+          "legendFormat": "P95 Latency",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "fillOpacity": 10 }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "title": "Error Rate (errors/sec)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(http_request_errors_total{job=\"node-app\"}[1m])",
+          "legendFormat": "{{method}} {{route}} ({{status}})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "fillOpacity": 20 }
+        },
+        "overrides": []
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}
